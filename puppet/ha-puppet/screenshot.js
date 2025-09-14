@@ -114,7 +114,16 @@ export class Browser {
 
     try {
       console.log("Starting browser");
+
+      const args = [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        '--ignore-certificate-errors',
+        '--ignore-certificate-errors-spki-list '
+      ];
+
       browser = await puppeteer.launch({
+        args,
         headless: "shell",
         executablePath: chromiumExecutable,
         args: puppeteerArgs,
