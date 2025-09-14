@@ -23,7 +23,7 @@ export const keepBrowserOpen = options.keep_browser_open || false;
 
 
 console.warn(`hassUrl : ${hassUrl}`);
-console.warn(`keepBrowserOpen : ${keepBrowserOpen}`);
+console.warn(`keepBrowserOpen 1 : ${keepBrowserOpen}`);
 
 if (!hassToken) {
   console.error("No access token found. Please configure the access token");
