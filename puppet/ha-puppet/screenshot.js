@@ -49,6 +49,8 @@ const puppeteerArgs = [
   "--password-store=basic",
   "--use-gl=swiftshader",
   "--use-mock-keychain",
+  '--ignore-certificate-errors',
+  '--ignore-certificate-errors-spki-list '
 ];
 if (isAddOn) {
   puppeteerArgs.push("--enable-low-end-device-mode");
@@ -116,14 +118,9 @@ export class Browser {
       console.log("Starting browser");
 
       const args = [
-        "--disable-setuid-sandbox",
-        "--no-sandbox",
-        '--ignore-certificate-errors',
-        '--ignore-certificate-errors-spki-list '
       ];
 
       browser = await puppeteer.launch({
-        args,
         headless: "shell",
         executablePath: chromiumExecutable,
         args: puppeteerArgs,
