@@ -13,7 +13,13 @@ options:
   access_token: ""
   home_assistant_url: ""
   keep_browser_open: false
+  dashboard_urls:
+    - url: ""
+      refersh_after_min: 60 
 schema:
   access_token: str
   home_assistant_url: str
   keep_browser_open: bool
+  dashboard_urls:
+    - url: str
+      refersh_after_min: int 

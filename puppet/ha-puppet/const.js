@@ -21,8 +21,11 @@ export const chromiumExecutable = isAddOn ? "/usr/bin/chromium" : (options.chrom
 
 export const keepBrowserOpen = options.keep_browser_open || false;
 
+export const dashboard_urls = options.dashboard_urls
+
 
 console.warn(`hassUrl : ${hassUrl}`);
+console.warn(`dashboard_urls : ${dashboard_urls}`);
 console.warn(`keepBrowserOpen 1 : ${keepBrowserOpen}`);
 
 if (!hassToken) {
