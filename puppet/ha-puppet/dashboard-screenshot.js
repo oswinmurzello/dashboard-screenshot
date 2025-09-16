@@ -1,8 +1,8 @@
 import { Browser } from "./screenshot.js";
 import { dashboard_urls, screenshots_folder , isAddOn, hassUrl, hassToken, keepBrowserOpen } from "./const.js";
 import { CannotOpenPageError } from "./error.js";
-import { writeFileSync } from fs
-import {join} from path
+import { writeFileSync } from "node:fs";
+import {join} from "node:path"
 
 // Maximum number of next requests to keep in memory
 const MAX_NEXT_REQUESTS = 100;

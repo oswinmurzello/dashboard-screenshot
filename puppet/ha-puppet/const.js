@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync } from "node:fs";
 
 // load first file that exists
 const optionsFile = ["./options-dev.json", "/data/options.json"].find(
