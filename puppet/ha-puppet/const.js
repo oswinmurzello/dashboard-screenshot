@@ -21,7 +21,10 @@ export const chromiumExecutable = isAddOn ? "/usr/bin/chromium" : (options.chrom
 
 export const keepBrowserOpen = options.keep_browser_open || false;
 
+
 export const dashboard_urls = options.dashboard_urls
+
+export const screenshots_folder = "/tmp/screenshot/";
 
 
 console.warn(`hassUrl : ${hassUrl}`);
@@ -32,3 +35,4 @@ if (!hassToken) {
   console.error("No access token found. Please configure the access token");
   process.exit(1);
 }
+
