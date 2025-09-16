@@ -3,7 +3,7 @@ import { Browser } from "./screenshot.js";
 import { isAddOn, hassUrl, hassToken, keepBrowserOpen, screenshots_folder } from "./const.js";
 import { CannotOpenPageError } from "./error.js";
 import { scheduleScreenshots } from "./dashboard-screenshot.js"
-import { readFileSync } from "node:fs";
+import { createReadStream } from "node:fs";
 import {join} from "node:path"
 
 // Maximum number of next requests to keep in memory
@@ -51,7 +51,7 @@ class RequestHandler {
 
       const requiredPage = (this.currentPage + changePage)%this.lastPage;
       const file = join(screenshots_folder, requiredPage+"."+format);
-      
+      const readStream = createReadStream(file);
 
       // If eink processing happened, the format could be png or bmp
       const responseFormat = format;
@@ -66,11 +66,19 @@ class RequestHandler {
         contentType = "image/png";
       }
 
+      // Handle errors if the file can't be read.
+      readStream.on('error', (err) => {
+        response.statusCode = 404;
+        response.end();
+      });
+
+      // Pipe the file stream to the HTTP response stream.
+      readStream.pipe(response);
+
       response.writeHead(200, {
         "Content-Type": contentType,
         "page": requiredPage,
       });
-      response.sendFile(file);
       response.end();
     } finally {
     }
