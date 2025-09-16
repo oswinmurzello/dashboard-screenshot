@@ -453,6 +453,7 @@ export class Browser {
           sharpInstance = sharpInstance.webp();
           image = await sharpInstance.toBuffer();
         } else {
+          sharpInstance = await this.makeColorTransparent(sharpInstance,[250, 250, 250]);
           sharpInstance = sharpInstance.png({
             colours: einkColors,
           });
@@ -474,6 +475,7 @@ export class Browser {
         const bmpEncoder = new BMPEncoder(info.width, info.height, 24);
         image = bmpEncoder.encode(data);
       } else {
+        sharpInstance = await this.makeColorTransparent(sharpInstance,[250, 250, 250]);
         sharpInstance = sharpInstance.png();
         image = await sharpInstance.toBuffer();
       }
@@ -491,4 +493,29 @@ export class Browser {
       this.busy = false;
     }
   }
+
+  async makeColorTransparent(sharpInstance, colorToReplace) {
+  try {
+    const { data, info } = await sharpInstance
+      .ensureAlpha() // Ensure the image has an alpha channel
+      .raw() // Convert the image to raw pixel data
+      .toBuffer({ resolveWithObject: true });
+
+    // Loop through each pixel and replace the target color
+    for (let i = 0; i < data.length; i += info.channels) {
+      const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+      // Check if the pixel matches the color to be replaced (e.g., pure white)
+      if (r === colorToReplace[0] && g === colorToReplace[1] && b === colorToReplace[2]) {
+        data[i + 3] = 0; // Set the alpha channel to 0 (fully transparent)
+      }
+    }
+
+    return await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
+      .png() // Convert the raw data back to a PNG
+      // .toFile(outputPath);
+    // console.log(`Image with transparent color saved to ${outputPath}`);
+  } catch (error) {
+    console.error('Error processing image:', error);
+  }
+}
 }
