@@ -267,6 +267,10 @@ class RequestHandler {
     
 }
 
+function takeScreenshot(params,d,i,file){
+            console.log(i,"will take screenshot");
+            requestHandler.saveScreenshot(params,d,i,file);
+        }
 
 export function scheduleScreenshots(){
     const browser = new Browser(hassUrl, hassToken);
@@ -277,11 +281,9 @@ export function scheduleScreenshots(){
         const {format} = params;
         const file = join(screenshots_folder, i+"."+format);
         console.log(i,"screenshot save path ",file);
-        setInterval(()=>{
-            console.log(i,"will take screenshot");
-            requestHandler.saveScreenshot(params,d,i,file);
-        }, d.refersh_after_min * 60 * 1000
-        ); 
+        setInterval(()=>takeScreenshot(params,d,i,file), d.refersh_after_min * 60 * 1000);
+        console.log(i,"screenshot interval set");
+        takeScreenshot(params,d,i,file)
         return file;
         }catch (err) {
         console.error(i, "Error preparing scdhduler for",d, err);
