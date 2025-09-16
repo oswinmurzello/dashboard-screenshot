@@ -58,10 +58,10 @@ class RequestHandler {
     );
   }
 
-    parseParams(d,i,){
+    parseParams(d,i){
 
         const requestId = i;
-        console.debug(requestId, "Handling", d.url);
+        console.debug(requestId, "Parsing", d.url);
         const requestUrl = new URL(
             d.url,
             // We don't use this, but we need full URL for parsing.
@@ -108,6 +108,8 @@ class RequestHandler {
         const lang = requestUrl.searchParams.get("lang") || undefined;
         const theme = requestUrl.searchParams.get("theme") || undefined;
         const dark = requestUrl.searchParams.has("dark");
+
+        console.debug(requestId, "Parsed", d.url);
         return {requestUrl,extraWait,viewportParams,einkColors,zoom,invert,format,rotate,lang,theme,dark}
     }
 
@@ -274,7 +276,12 @@ export function scheduleScreenshots(){
         const params= requestHandler.parseParams(d,i);
         const {format} = params;
         const file = join(screenshots_folder, i+"."+format);
-        setInterval(()=>requestHandler.saveScreenshot(params,d,i,file), d.refersh_after_min * 60 * 1000); 
+        console.log(i,"screenshot save path ",file);
+        setInterval(()=>{
+            console.log(i,"will take screenshot");
+            requestHandler.saveScreenshot(params,d,i,file);
+        }, d.refersh_after_min * 60 * 1000
+        ); 
         return file;
         }catch (err) {
         console.error(i, "Error preparing scdhduler for",d, err);
