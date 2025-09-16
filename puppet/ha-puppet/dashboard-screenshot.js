@@ -58,29 +58,7 @@ class RequestHandler {
     );
   }
 
-
-
-    async saveScreenshot(d,i,file) {
-        // if (request.url === "/favicon.ico") {
-        //   response.statusCode = 404;
-        //   response.end();
-        //   return;
-        // }
-
-        // const requestId = ++this.requestCount;
-        // console.debug(requestId, "Request", request.url);
-        const requestId = i;
-
-        const start = new Date();
-        if (this.busy) {
-          console.log(requestId, "Busy, waiting in queue");
-          await new Promise((resolve) => this.pending.push(resolve));
-          const end = Date.now();
-          console.log(requestId, `Wait time: ${end - start} ms`);
-        }
-        this.busy = true;
-
-        try {
+    parseParams(d,i,){
         console.debug(requestId, "Handling", d.url);
         const requestUrl = new URL(
             d.url,
@@ -128,7 +106,34 @@ class RequestHandler {
         const lang = requestUrl.searchParams.get("lang") || undefined;
         const theme = requestUrl.searchParams.get("theme") || undefined;
         const dark = requestUrl.searchParams.has("dark");
+        return {requestUrl,extraWait,viewportParams,einkColors,zoom,invert,format,rotate,lang,theme,dark}
+    }
 
+
+
+    async saveScreenshot(params,d,i,file) {
+        const {requestUrl,extraWait,viewportParams,einkColors,zoom,invert,format,rotate,lang,theme,dark} = params;
+        // if (request.url === "/favicon.ico") {
+        //   response.statusCode = 404;
+        //   response.end();
+        //   return;
+        // }
+
+        // const requestId = ++this.requestCount;
+        // console.debug(requestId, "Request", request.url);
+        const requestId = i;
+
+        const start = new Date();
+        if (this.busy) {
+          console.log(requestId, "Busy, waiting in queue");
+          await new Promise((resolve) => this.pending.push(resolve));
+          const end = Date.now();
+          console.log(requestId, `Wait time: ${end - start} ms`);
+        }
+        this.busy = true;
+
+        try {
+        
         const requestParams = {
             pagePath: requestUrl.pathname,
             viewport: { width: viewportParams[0], height: viewportParams[1] },
@@ -262,8 +267,10 @@ export function scheduleScreenshots(){
     const browser = new Browser(hassUrl, hassToken);
     const requestHandler = new RequestHandler(browser);
     const screenshot_files =  dashboard_urls.map((d,i)=>{
+        const params= requestHandler.parseParams(d,i);
+        const {format} = params;
         const file = join(screenshots_folder, i+"."+format);
-        setInterval(()=>requestHandler.saveScreenshot(d,i,file), d.refersh_after_min * 60 * 1000); 
+        setInterval(()=>requestHandler.saveScreenshot(params,d,i,file), d.refersh_after_min * 60 * 1000); 
         return file
     });
     return screenshot_files;
