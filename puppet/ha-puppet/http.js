@@ -19,6 +19,8 @@ class RequestHandler {
 
     // Request counter to identify requests
     this.lastPage = screenshot_files.length;
+
+    this.requestCount = 0
   }
 
   async handleRequest(request, response) {
@@ -32,7 +34,6 @@ class RequestHandler {
     console.debug(requestId, "Request", request.url);
 
     try {
-      console.debug(requestId, "Handling", request.url);
       const requestUrl = new URL(
         request.url,
         // We don't use this, but we need full URL for parsing.
@@ -52,6 +53,7 @@ class RequestHandler {
       const requiredPage = (this.currentPage + changePage)%this.lastPage;
       const file = join(screenshots_folder, requiredPage+"."+format);
       const readStream = createReadStream(file);
+      console.debug(requestId, "respond with ", file);
 
       // If eink processing happened, the format could be png or bmp
       const responseFormat = format;
