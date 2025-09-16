@@ -124,7 +124,7 @@ class RequestHandler {
         // const requestId = ++this.requestCount;
         // console.debug(requestId, "Request", request.url);
         const requestId = i;
-
+        console.log(requestId, `saveScreenshot`);
         const start = new Date();
         if (this.busy) {
           console.log(requestId, "Busy, waiting in queue");
@@ -135,7 +135,8 @@ class RequestHandler {
         this.busy = true;
 
         try {
-        
+        console.log(requestId,"Params requestUrl",requestUrl,"extraWait ",extraWait,"viewportParams ",viewportParams,
+            "einkColors ",einkColors,"zoom ",zoom,"invert ",invert,"format ",format,"rotate ",rotate,"lang ",lang,"theme ",theme,"dark ",dark);
         const requestParams = {
             pagePath: requestUrl.pathname,
             viewport: { width: viewportParams[0], height: viewportParams[1] },
@@ -269,11 +270,15 @@ export function scheduleScreenshots(){
     const browser = new Browser(hassUrl, hassToken);
     const requestHandler = new RequestHandler(browser);
     const screenshot_files =  dashboard_urls.map((d,i)=>{
+        try{
         const params= requestHandler.parseParams(d,i);
         const {format} = params;
         const file = join(screenshots_folder, i+"."+format);
         setInterval(()=>requestHandler.saveScreenshot(params,d,i,file), d.refersh_after_min * 60 * 1000); 
-        return file
+        return file;
+        }catch (err) {
+        console.error(i, "Error preparing scdhduler for",d, err);
+        }
     });
     return screenshot_files;
     // Set the interval to 100 minutes (6,000,000 milliseconds)
