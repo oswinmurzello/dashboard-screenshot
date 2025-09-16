@@ -1,6 +1,6 @@
 import http from "node:http";
 import { Browser } from "./screenshot.js";
-import { isAddOn, hassUrl, hassToken, keepBrowserOpen } from "./const.js";
+import { isAddOn, hassUrl, hassToken, keepBrowserOpen, screenshots_folder } from "./const.js";
 import { CannotOpenPageError } from "./error.js";
 import { scheduleScreenshots } from "./dashboard-screenshot.js"
 import { readFileSync } from "node:fs";
