@@ -4,6 +4,7 @@ import { isAddOn, hassUrl, hassToken, keepBrowserOpen } from "./const.js";
 import { CannotOpenPageError } from "./error.js";
 import { scheduleScreenshots } from "./dashboard-screenshot.js"
 import { readFileSync } from "node:fs";
+import {join} from "node:path"
 
 // Maximum number of next requests to keep in memory
 const MAX_NEXT_REQUESTS = 100;
