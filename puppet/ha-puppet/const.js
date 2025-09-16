@@ -24,7 +24,7 @@ export const keepBrowserOpen = options.keep_browser_open || false;
 
 export const dashboard_urls = options.dashboard_urls
 
-export const screenshots_folder = "tmp/screenshot/";
+export const screenshots_folder = isAddOn ? "/tmp/screenshot/": "tmp/screenshot/";
 if (!existsSync(screenshots_folder)){
     mkdirSync(screenshots_folder);
 }
