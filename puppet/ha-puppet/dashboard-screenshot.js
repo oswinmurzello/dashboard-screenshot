@@ -258,7 +258,7 @@ class RequestHandler {
 }
 
 
- function scheduleScreenshots(){
+export function scheduleScreenshots(){
     const browser = new Browser(hassUrl, hassToken);
     const requestHandler = new RequestHandler(browser);
     const screenshot_files =  dashboard_urls.map((d,i)=>{
