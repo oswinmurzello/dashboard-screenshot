@@ -75,12 +75,12 @@ class RequestHandler {
       });
 
       // Pipe the file stream to the HTTP response stream.
-      readStream.pipe(response);
 
       response.writeHead(200, {
         "Content-Type": contentType,
         "page": requiredPage,
       });
+      readStream.pipe(response);
       response.end();
     } finally {
     }
