@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, mkdirSync } from "node:fs";
 
 // load first file that exists
 const optionsFile = ["./options-dev.json", "/data/options.json"].find(
@@ -25,7 +25,9 @@ export const keepBrowserOpen = options.keep_browser_open || false;
 export const dashboard_urls = options.dashboard_urls
 
 export const screenshots_folder = "/tmp/screenshot/";
-
+if (!existsSync(screenshots_folder)){
+    mkdirSync(screenshots_folder);
+}
 
 console.warn(`hassUrl : ${hassUrl}`);
 console.warn(`dashboard_urls : ${dashboard_urls}`);
