@@ -59,6 +59,8 @@ class RequestHandler {
   }
 
     parseParams(d,i,){
+
+        const requestId = i;
         console.debug(requestId, "Handling", d.url);
         const requestUrl = new URL(
             d.url,
