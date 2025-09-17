@@ -49,8 +49,8 @@ const puppeteerArgs = [
   "--password-store=basic",
   "--use-gl=swiftshader",
   "--use-mock-keychain",
-  '--ignore-certificate-errors',
-  '--ignore-certificate-errors-spki-list '
+  "--ignore-certificate-errors",
+  "--ignore-certificate-errors-spki-list ",
 ];
 if (isAddOn) {
   puppeteerArgs.push("--enable-low-end-device-mode");
@@ -117,8 +117,7 @@ export class Browser {
     try {
       console.log("Starting browser");
 
-      const args = [
-      ];
+      const args = [];
 
       browser = await puppeteer.launch({
         headless: "shell",
@@ -132,28 +131,28 @@ export class Browser {
       page
         .on("framenavigated", (frame) =>
           // Why are we seeing so many frame navigated ??
-          console.log("Frame navigated", frame.url()),
+          console.log("Frame navigated", frame.url())
         )
         .on("console", (message) =>
           console.log(
             `CONSOLE ${message
               .type()
               .substr(0, 3)
-              .toUpperCase()} ${message.text()}`,
-          ),
+              .toUpperCase()} ${message.text()}`
+          )
         )
         .on("error", (err) => console.error("ERROR", err))
         .on("pageerror", ({ message }) => console.log("PAGE ERROR", message))
         .on("requestfailed", (request) =>
           console.log(
-            `REQUEST-FAILED ${request.failure().errorText} ${request.url()}`,
-          ),
+            `REQUEST-FAILED ${request.failure().errorText} ${request.url()}`
+          )
         );
       if (debug)
         page.on("response", (response) =>
           console.log(
-            `RESPONSE ${response.status()} ${response.url()} (cache: ${response.fromCache()})`,
-          ),
+            `RESPONSE ${response.status()} ${response.url()} (cache: ${response.fromCache()})`
+          )
         );
     } catch (err) {
       console.error("Error starting browser", err);
@@ -233,7 +232,7 @@ export class Browser {
               localStorage.setItem(key, value);
             }
           },
-          browserLocalStorage,
+          browserLocalStorage
         );
 
         // Open the HA UI
@@ -254,7 +253,7 @@ export class Browser {
           history.replaceState(
             history.state?.root ? { root: true } : null,
             "",
-            pagePath,
+            pagePath
           );
           const event = new Event("location-changed");
           event.detail = { replace: true };
@@ -277,11 +276,11 @@ export class Browser {
           const haEl = document.querySelector("home-assistant");
           if (!haEl) return false;
           const notifyEl = haEl.shadowRoot?.querySelector(
-            "notification-manager",
+            "notification-manager"
           );
           if (!notifyEl) return false;
           const actionEl = notifyEl.shadowRoot.querySelector(
-            "ha-toast *[slot=action]",
+            "ha-toast *[slot=action]"
           );
           if (!actionEl) return false;
           actionEl.click();
@@ -304,11 +303,11 @@ export class Browser {
             const haEl = document.querySelector("home-assistant");
             if (!haEl) return false;
             const mainEl = haEl.shadowRoot?.querySelector(
-              "home-assistant-main",
+              "home-assistant-main"
             );
             if (!mainEl) return false;
             const panelResolver = mainEl.shadowRoot?.querySelector(
-              "partial-panel-resolver",
+              "partial-panel-resolver"
             );
             if (!panelResolver || panelResolver._loading) {
               return false;
@@ -322,7 +321,7 @@ export class Browser {
           {
             timeout: 10000,
             polling: 100,
-          },
+          }
         );
       } catch (err) {
         console.log("Timeout waiting for HA to finish loading");
@@ -351,10 +350,10 @@ export class Browser {
             document.querySelector("home-assistant").dispatchEvent(
               new CustomEvent("settheme", {
                 detail: { theme, dark },
-              }),
+              })
             );
           },
-          { theme: theme || "", dark },
+          { theme: theme || "", dark }
         );
         this.lastRequestedTheme = theme;
         this.lastRequestedDarkMode = dark;
@@ -426,24 +425,25 @@ export class Browser {
         if (einkColors === 2) {
           sharpInstance = sharpInstance.toColourspace("b-w");
         }
+        
         if (format == "bmp") {
           sharpInstance = sharpInstance.raw();
 
           const { data, info } = await sharpInstance.toBuffer({
             resolveWithObject: true,
           });
-          let bitsPerPixel = 8;
+          let bitsPerPixel = 24;
           if (einkColors === 2) {
             bitsPerPixel = 1;
           } else if (einkColors === 4) {
-            bitsPerPixel = 2;
+            bitsPerPixel = 24;
           } else if (einkColors === 16) {
-            bitsPerPixel = 4;
+            bitsPerPixel = 24;
           }
           const bmpEncoder = new BMPEncoder(
             info.width,
             info.height,
-            bitsPerPixel,
+            bitsPerPixel
           );
           image = bmpEncoder.encode(data);
         } else if (format === "jpeg") {
@@ -453,7 +453,10 @@ export class Browser {
           sharpInstance = sharpInstance.webp();
           image = await sharpInstance.toBuffer();
         } else {
-          sharpInstance = await this.makeColorTransparent(sharpInstance,[250, 250, 250]);
+          sharpInstance = await this.makeColorTransparent(
+            sharpInstance,
+            [250, 250, 250]
+          );
           sharpInstance = sharpInstance.png({
             colours: einkColors,
           });
@@ -475,7 +478,10 @@ export class Browser {
         const bmpEncoder = new BMPEncoder(info.width, info.height, 24);
         image = bmpEncoder.encode(data);
       } else {
-        sharpInstance = await this.makeColorTransparent(sharpInstance,[250, 250, 250]);
+        sharpInstance = await this.makeColorTransparent(
+          sharpInstance,
+          [250, 250, 250]
+        );
         sharpInstance = sharpInstance.png();
         image = await sharpInstance.toBuffer();
       }
@@ -495,27 +501,36 @@ export class Browser {
   }
 
   async makeColorTransparent(sharpInstance, colorToReplace) {
-  try {
-    const { data, info } = await sharpInstance
-      .ensureAlpha() // Ensure the image has an alpha channel
-      .raw() // Convert the image to raw pixel data
-      .toBuffer({ resolveWithObject: true });
+    try {
+      const { data, info } = await sharpInstance
+        .ensureAlpha() // Ensure the image has an alpha channel
+        .raw() // Convert the image to raw pixel data
+        .toBuffer({ resolveWithObject: true });
 
-    // Loop through each pixel and replace the target color
-    for (let i = 0; i < data.length; i += info.channels) {
-      const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
-      // Check if the pixel matches the color to be replaced (e.g., pure white)
-      if (r === colorToReplace[0] && g === colorToReplace[1] && b === colorToReplace[2]) {
-        data[i + 3] = 0; // Set the alpha channel to 0 (fully transparent)
+      // Loop through each pixel and replace the target color
+      for (let i = 0; i < data.length; i += info.channels) {
+        const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+        // Check if the pixel matches the color to be replaced (e.g., pure white)
+        if (
+          r === colorToReplace[0] &&
+          g === colorToReplace[1] &&
+          b === colorToReplace[2]
+        ) {
+          data[i + 3] = 0; // Set the alpha channel to 0 (fully transparent)
+        }
       }
-    }
 
-    return await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
-      .png() // Convert the raw data back to a PNG
+      return await sharp(data, {
+        raw: {
+          width: info.width,
+          height: info.height,
+          channels: info.channels,
+        },
+      }); // Convert the raw data back to a PNG
       // .toFile(outputPath);
-    // console.log(`Image with transparent color saved to ${outputPath}`);
-  } catch (error) {
-    console.error('Error processing image:', error);
+      // console.log(`Image with transparent color saved to ${outputPath}`);
+    } catch (error) {
+      console.error("Error processing image:", error);
+    }
   }
-}
 }
