@@ -453,10 +453,10 @@ export class Browser {
           sharpInstance = sharpInstance.webp();
           image = await sharpInstance.toBuffer();
         } else {
-          sharpInstance = await this.makeColorTransparent(
-            sharpInstance,
-            [250, 250, 250]
-          );
+          // sharpInstance = await this.makeColorTransparent(
+          //   sharpInstance,
+          //   [250, 250, 250]
+          // );
           sharpInstance = sharpInstance.png({
             colours: einkColors,
           });
@@ -478,10 +478,10 @@ export class Browser {
         const bmpEncoder = new BMPEncoder(info.width, info.height, 24);
         image = bmpEncoder.encode(data);
       } else {
-        sharpInstance = await this.makeColorTransparent(
-          sharpInstance,
-          [250, 250, 250]
-        );
+        // sharpInstance = await this.makeColorTransparent(
+        //   sharpInstance,
+        //   [250, 250, 250]
+        // );
         sharpInstance = sharpInstance.png();
         image = await sharpInstance.toBuffer();
       }
