@@ -76,6 +76,7 @@ class RequestHandler {
         "page": requiredPage,
         'Content-Length': stats.size
       });
+      this.currentPage = requiredPage;
       // readStream.pipe(response);
       response.write(image);
       response.end();
