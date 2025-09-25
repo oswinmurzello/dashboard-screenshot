@@ -366,6 +366,7 @@ export class Browser {
         extraWait = defaultWait;
       }
       if (extraWait) {
+        console.log("Waiting extra", extraWait, "ms");
         await new Promise((resolve) => setTimeout(resolve, extraWait));
       }
 

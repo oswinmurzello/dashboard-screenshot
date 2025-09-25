@@ -248,8 +248,8 @@ class RequestHandler {
         try {
         const navigateResult = await this.browser.navigatePage({
             ...requestParams,
-            // No unnecessary wait time, as we're just warming up
-            extraWait: 0,
+            // // No unnecessary wait time, as we're just warming up
+            // extraWait: 0,
         });
         console.debug(requestId, `Navigated in ${navigateResult.time} ms`);
         } catch (err) {

@@ -5,6 +5,7 @@ import { CannotOpenPageError } from "./error.js";
 import { scheduleScreenshots } from "./dashboard-screenshot.js"
 import { createReadStream, readFileSync, statSync } from "node:fs";
 import {join} from "node:path"
+import './consoleTimestamp.js'  // Adds timestamp to console.log
 
 // Maximum number of next requests to keep in memory
 const MAX_NEXT_REQUESTS = 100;
